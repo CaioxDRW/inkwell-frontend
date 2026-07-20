@@ -1,0 +1,14 @@
+/* src/App.css */
+
+:root {
+  /* Você pode manter suas cores de destaque aqui se preferir usar variáveis CSS */
+  --primary: #ec4899; 
+}
+
+/* Se quiser manter aquele efeito 3D do logo do Vite que estava no seu CSS, 
+   é melhor criar um componente específico para ele, mas por enquanto, 
+   o foco é o layout Inkwell. */
+
+.page-transition {
+  @apply animate-in fade-in duration-500;
+}

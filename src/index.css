@@ -1,0 +1,54 @@
+@config "./tailwind.config.js";
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #f2dd63;
+  --color-background-light: #ffffff;
+  --color-background-dark: #09090b;
+}
+
+@layer base {
+  /* O segredo está aqui: o fundo muda baseado na classe .dark do html */
+  body {
+    @apply bg-white text-black antialiased transition-colors duration-300;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  /* Quando o HTML tiver a classe .dark, o body fica preto e o texto branco */
+  .dark body {
+    @apply bg-black text-white;
+  }
+}
+
+/* Customização do Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-zinc-100 dark:bg-zinc-950;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-zinc-300 dark:bg-zinc-800 rounded-full hover:bg-zinc-400 dark:hover:bg-zinc-700 transition-colors;
+}
+
+@layer components {
+  .bg-comic-dots {
+    background-image: radial-gradient(circle, #333 1px, transparent 1px);
+    background-size: 10px 10px;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+.break-inside-avoid {
+  break-inside: avoid;
+}
