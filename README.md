@@ -1,7 +1,7 @@
 <div align="center">
 
   <h1>🖋️ Inkwell</h1>
-  <p><b>Sua plataforma completa de gestão, leitura e publicação de conteúdos.</b></p>
+  <p><b>Sua plataforma completa de inpirações artísticas e imagens.</b></p>
 
   <!-- Status / Badges -->
   <p>
