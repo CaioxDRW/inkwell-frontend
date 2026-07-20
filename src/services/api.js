@@ -44,12 +44,12 @@ const safeFetch = async (url, options) => {
       try {
         data = JSON.parse(text);
       } catch (jsonError) {
-        data = null;
+        data = text;
       }
     }
 
     if (!response.ok) {
-      const message = data && (data.error || data.message)
+      const message = data && typeof data === 'object' && (data.error || data.message)
         ? data.error || data.message
         : `Erro na requisição (${response.status})`;
       throw new Error(message);
@@ -64,14 +64,28 @@ const safeFetch = async (url, options) => {
   }
 };
 
+const normalizeAuthResponse = (data) => {
+  if (!data || typeof data !== 'object') {
+    return { raw: data, user: null };
+  }
+
+  const user = data.user ?? data.data?.user ?? data.data ?? data;
+  return {
+    raw: data,
+    user: typeof user === 'object' && user !== null ? user : null
+  };
+};
+
 // ==================== SERVIÇOS DE AUTENTICAÇÃO ====================
 export const authService = {
   login: async (email, password) => {
-    return safeFetch(LOGIN_URL, fetchOptions('POST', { email, password }));
+    const data = await safeFetch(LOGIN_URL, fetchOptions('POST', { email, password }));
+    return normalizeAuthResponse(data);
   },
 
   register: async (name, email, password) => {
-    return safeFetch(REGISTER_URL, fetchOptions('POST', { name, email, password }));
+    const data = await safeFetch(REGISTER_URL, fetchOptions('POST', { name, email, password }));
+    return normalizeAuthResponse(data);
   }
 };
 

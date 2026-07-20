@@ -36,17 +36,19 @@ const AuthPage = ({ onLoginSuccess, onGuestClick }) => {
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const data = await authService.login(form.email, form.password);
-        if (data.user) {
-          onLoginSuccess(data.user);
-        }
-      } else {
-        const data = await authService.register(form.name, form.email, form.password);
-        if (data.user) {
-          onLoginSuccess(data.user);
-        }
+      const action = isLogin ? authService.login : authService.register;
+      const response = isLogin
+        ? await action(form.email, form.password)
+        : await action(form.name, form.email, form.password);
+
+      const userData = response?.user;
+      const hasValidId = userData && typeof userData === 'object' && (userData.id || userData.user_id);
+      if (!hasValidId) {
+        console.warn('AuthPage: resposta inesperada do backend', response);
+        throw new Error('Resposta inválida do servidor. Tente novamente.');
       }
+
+      onLoginSuccess(userData);
     } catch (err) {
       setError(err.message || 'Erro ao conectar-se com o servidor backend.');
     } finally {
