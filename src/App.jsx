@@ -4,6 +4,7 @@ import { Home, Library, Search, Mic2, Sun, Moon, X, Info, Bookmark, LogOut } fro
 import { motion, AnimatePresence } from 'framer-motion';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, EffectFade, Pagination } from 'swiper/modules';
+import SearchSection from './SearchSection'; // (ou o caminho correto da pasta dele)
 
 import 'swiper/css';
 import 'swiper/css/effect-fade';
