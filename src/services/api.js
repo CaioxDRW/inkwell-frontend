@@ -44,10 +44,11 @@ const safeFetch = async (url, options) => {
     if (text) {
       try {
         data = JSON.parse(text);
-      } catch (jsonError) {
-        console.error('Resposta do PHP não é JSON válido:', text);
-        throw new Error('O servidor respondeu em formato inválido. Tente recarregar.');
-      }
+} catch (jsonError) {
+  console.log("CONTEÚDO RECEBIDO DO SERVIDOR:", text); // <-- Adicione este log
+  console.error('Resposta do PHP não é JSON válido:', text);
+  throw new Error('O servidor respondeu em formato inválido. Tente recarregar.');
+}
     }
 
     if (!response.ok) {
