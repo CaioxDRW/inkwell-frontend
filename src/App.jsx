@@ -44,24 +44,6 @@ const RECOMMENDED_DATA = [
   }
 ];
 
-const SearchSection = () => {
-  return (
-    <div className="space-y-6 mb-10">
-      <div className="relative group max-w-2xl">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Search className="text-zinc-500 group-focus-within:text-yellow-500 transition-colors" size={20} />
-        </div>
-        <input
-          type="text"
-          placeholder="O que você quer desenhar ou explorar hoje?"
-          className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 py-4 pl-12 pr-4 rounded-2xl outline-none 
-                     focus:border-yellow-500/50 transition-all text-black dark:text-white placeholder:text-zinc-400 dark:placeholder:text-zinc-600"
-        />
-      </div>
-    </div>
-  );
-};
-
 const Layout = ({ children, toggleTheme, isDarkMode, onLogout, user }) => (
   <div className="flex flex-col md:flex-row h-screen bg-zinc-50 dark:bg-black text-black dark:text-white font-sans transition-colors duration-300">
     <header className="md:hidden w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-900 px-4 py-3">
