@@ -2,7 +2,7 @@ const API_URL = '/api-proxy/api.php';
 const LOGIN_URL = '/api-proxy/login.php';
 const REGISTER_URL = '/api-proxy/register.php';
 
-// Função auxiliar para tentar pegar o ID do usuário localmente caso a sessão falhe
+// Função auxiliar para tentar pegar o ID do usuário localmente
 const getFallbackUserId = () => {
   const storedUser = localStorage.getItem('inkwell_user') || localStorage.getItem('user');
   if (storedUser) {
@@ -18,7 +18,8 @@ const getFallbackUserId = () => {
 
 const fetchOptions = (method, body = null) => {
   if (body && !body.user_id) {
-    body.user_id = getFallbackUserId();
+    const fallbackId = getFallbackUserId();
+    if (fallbackId) body.user_id = fallbackId;
   }
 
   const options = {
@@ -44,7 +45,8 @@ const safeFetch = async (url, options) => {
       try {
         data = JSON.parse(text);
       } catch (jsonError) {
-        data = text;
+        console.error('Resposta do PHP não é JSON válido:', text);
+        throw new Error('O servidor respondeu em formato inválido. Tente recarregar.');
       }
     }
 
@@ -57,6 +59,7 @@ const safeFetch = async (url, options) => {
 
     return data;
   } catch (error) {
+    console.error('Erro em safeFetch:', error);
     const message = error instanceof TypeError
       ? 'Falha de comunicação com o servidor. Verifique se o backend está rodando.'
       : error.message;
@@ -69,7 +72,9 @@ const normalizeAuthResponse = (data) => {
     return { raw: data, user: null };
   }
 
-  const user = data.user ?? data.data?.user ?? data.data ?? data;
+  // Captura o usuário independentemente de como o PHP o devolva
+  const user = data.user ?? data.data?.user ?? data.data ?? (data.id ? data : null);
+  
   return {
     raw: data,
     user: typeof user === 'object' && user !== null ? user : null
@@ -80,12 +85,24 @@ const normalizeAuthResponse = (data) => {
 export const authService = {
   login: async (email, password) => {
     const data = await safeFetch(LOGIN_URL, fetchOptions('POST', { email, password }));
-    return normalizeAuthResponse(data);
+    const result = normalizeAuthResponse(data);
+    
+    if (!result.user) {
+      throw new Error(data?.error || 'Dados de usuário ausentes na resposta do servidor.');
+    }
+    
+    return result;
   },
 
   register: async (name, email, password) => {
     const data = await safeFetch(REGISTER_URL, fetchOptions('POST', { name, email, password }));
-    return normalizeAuthResponse(data);
+    const result = normalizeAuthResponse(data);
+    
+    if (!result.user) {
+      throw new Error(data?.error || 'Não foi possível confirmar o cadastro do usuário.');
+    }
+
+    return result;
   }
 };
 
