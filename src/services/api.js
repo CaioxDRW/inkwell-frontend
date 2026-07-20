@@ -1,6 +1,6 @@
-const API_URL = 'http://inkwell-backend.free.nf/backend/api.php';
-const LOGIN_URL = 'http://inkwell-backend.free.nf/backend/login.php';
-const REGISTER_URL = 'http://inkwell-backend.free.nf/backend/register.php';
+const API_URL = '/api-proxy/api.php';
+const LOGIN_URL = '/api-proxy/login.php';
+const REGISTER_URL = '/api-proxy/register.php';
 
 // Função auxiliar para tentar pegar o ID do usuário localmente caso a sessão falhe
 const getFallbackUserId = () => {
