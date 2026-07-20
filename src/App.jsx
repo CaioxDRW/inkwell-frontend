@@ -63,8 +63,45 @@ const SearchSection = () => {
 };
 
 const Layout = ({ children, toggleTheme, isDarkMode, onLogout, user }) => (
-  <div className="flex h-screen bg-zinc-50 dark:bg-black text-black dark:text-white font-sans transition-colors duration-300">
-    <aside className="w-64 bg-white dark:bg-zinc-950 p-6 flex flex-col gap-8 border-r border-zinc-200 dark:border-zinc-900">
+  <div className="flex flex-col md:flex-row h-screen bg-zinc-50 dark:bg-black text-black dark:text-white font-sans transition-colors duration-300">
+    <header className="md:hidden w-full bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-900 px-4 py-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
+            <img src="/inkwell-logo.svg" alt="Inkwell" className="w-6 h-6 object-contain" />
+          </div>
+          <span className="font-black uppercase tracking-tighter text-sm">INKWELL</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={toggleTheme} className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200">
+            {isDarkMode ? <Moon size={18} /> : <Sun size={18} />}
+          </button>
+          <button onClick={onLogout} className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200">
+            <LogOut size={18} />
+          </button>
+        </div>
+      </div>
+      <nav className="mt-3 grid grid-cols-4 gap-2 text-zinc-500 dark:text-zinc-400">
+        <Link to="/" className="flex flex-col items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-900 p-3 hover:bg-yellow-400/10 transition-colors">
+          <Home size={18} />
+          <span className="text-[10px] mt-1">Início</span>
+        </Link>
+        <Link to="/search" className="flex flex-col items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-900 p-3 hover:bg-yellow-400/10 transition-colors">
+          <Search size={18} />
+          <span className="text-[10px] mt-1">Buscar</span>
+        </Link>
+        <Link to="/library" className="flex flex-col items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-900 p-3 hover:bg-yellow-400/10 transition-colors">
+          <Library size={18} />
+          <span className="text-[10px] mt-1">Biblioteca</span>
+        </Link>
+        <Link to="/favorites" className="flex flex-col items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-900 p-3 hover:bg-yellow-400/10 transition-colors">
+          <Bookmark size={18} />
+          <span className="text-[10px] mt-1">Favoritos</span>
+        </Link>
+      </nav>
+    </header>
+
+    <aside className="hidden md:flex md:w-64 bg-white dark:bg-zinc-950 p-6 flex-col gap-8 border-r border-zinc-200 dark:border-zinc-900">
       <div className="flex flex-col items-center gap-4">
         <div className="w-28 h-28 bg-yellow-400 rounded-full flex items-center justify-center p-4 shadow-lg">
           <img src="/inkwell-logo.svg" alt="Inkwell" className="w-full h-full object-contain" />
@@ -98,7 +135,8 @@ const Layout = ({ children, toggleTheme, isDarkMode, onLogout, user }) => (
         </button>
       </div>
     </aside>
-    <main className="flex-1 overflow-y-auto p-10 bg-white dark:bg-gradient-to-b dark:from-zinc-900 dark:to-black">
+
+    <main className="flex-1 overflow-y-auto p-4 md:p-10 bg-white dark:bg-gradient-to-b dark:from-zinc-900 dark:to-black">
       {children}
     </main>
   </div>

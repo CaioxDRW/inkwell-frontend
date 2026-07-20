@@ -12,9 +12,7 @@
    INKWELL - REFINAMENTO DE RESPONSIVIDADE & MEDIA QUERIES
    ====================================================== */
 
-/* 1. DISPOSITIVOS PEQUENOS / SMARTPHONES (Até 639px) */
 @media (max-width: 639px) {
-  /* Garante área de toque confortável (Touch Targets) no celular */
   button, 
   input[type="text"], 
   input[type="email"], 
@@ -22,17 +20,15 @@
   select, 
   textarea {
     min-height: 48px;
-    font-size: 16px !important; /* Previne zoom automático chato no Safari/iOS ao focar no campo */
+    font-size: 16px !important; 
   }
 
-  /* Previne que modais ou cards de login colem na borda da tela */
   .auth-card, .modal-box, .card-container {
     width: calc(100% - 1.5rem) !important;
     margin-left: auto;
     margin-right: auto;
   }
 
-  /* Se houver tabelas no app, permite rolagem suave */
   .table-responsive {
     display: block;
     width: 100%;
@@ -52,7 +48,6 @@
 
 /* 3. MONITORES ULTRAWIDE & DESKTOPS ENORMES (A partir de 1536px) */
 @media (min-width: 1536px) {
-  /* Impede que a interface 'estique' demais em monitores ultrawide de 34"+ */
   .container, .app-layout {
     max-width: 1440px;
     margin-left: auto;
@@ -60,7 +55,6 @@
   }
 }
 
-/* 4. MODO IMPRESSÃO (Opcional: limpa a tela se o usuário tentar imprimir a página) */
 @media print {
   nav, sidebar, button, .no-print {
     display: none !important;

@@ -64,8 +64,14 @@ const SearchPage = ({ defaultTab = 'search', user, onRequireLogin }) => {
           favoriteService.getFavorites()
         ]);
         if (isMounted) {
-          setFolders(fetchedFolders || []);
-          setFavorites(fetchedFavorites || []);
+          setFolders(prev => {
+            if (JSON.stringify(prev) === JSON.stringify(fetchedFolders || [])) return prev;
+            return fetchedFolders || [];
+          });
+          setFavorites(prev => {
+            if (JSON.stringify(prev) === JSON.stringify(fetchedFavorites || [])) return prev;
+            return fetchedFavorites || [];
+          });
         }
       } catch (err) {
         console.error("Erro ao carregar dados do banco:", err);
@@ -89,15 +95,19 @@ const SearchPage = ({ defaultTab = 'search', user, onRequireLogin }) => {
     
     try {
       const isAlreadyFav = favorites.some(fav => fav.uId === item.uId || fav.img === item.img);
-      if (isAlreadyFav) {
-        setFavorites(prev => prev.filter(fav => fav.uId !== item.uId && fav.img !== item.img));
-      } else {
-        setFavorites(prev => [...prev, item]);
-      }
+      setFavorites(prev => {
+        if (isAlreadyFav) {
+          return prev.filter(fav => fav.uId !== item.uId && fav.img !== item.img);
+        }
+        return [...prev, item];
+      });
 
       const updatedFavorites = await favoriteService.toggleFavorite(item);
-      if (updatedFavorites) {
+      if (Array.isArray(updatedFavorites) && updatedFavorites.length > 0) {
         setFavorites(updatedFavorites);
+      } else {
+        const fetchedFavorites = await favoriteService.getFavorites().catch(() => []);
+        setFavorites(fetchedFavorites);
       }
     } catch (err) {
       console.error("Erro ao alternar favorito:", err);
@@ -128,9 +138,14 @@ const SearchPage = ({ defaultTab = 'search', user, onRequireLogin }) => {
         ? await folderService.updateFolder(editingFolderId, payload)
         : await folderService.createFolder(payload);
 
-      setFolders(updated || []);
+      setFolders(prev => {
+        if (Array.isArray(updated) && updated.length > 0) return updated;
+        return prev;
+      });
     } catch (err) {
       console.error("Erro ao salvar/editar pasta:", err);
+      const refetchFolders = await folderService.getFolders().catch(() => []);
+      setFolders(refetchFolders);
     }
 
     setFolderForm({ name: '', bio: '', coverUrl: '' });
@@ -142,10 +157,17 @@ const SearchPage = ({ defaultTab = 'search', user, onRequireLogin }) => {
     e.stopPropagation();
     try {
       const updated = await folderService.deleteFolder(id);
-      setFolders(updated || []);
+      setFolders(prev => {
+        if (Array.isArray(updated) && updated.length > 0) {
+          return updated;
+        }
+        return prev.filter(folder => folder.id !== id);
+      });
       setActiveDropdownId(null);
     } catch (err) {
       console.error("Erro ao deletar pasta:", err);
+      const refetchFolders = await folderService.getFolders().catch(() => []);
+      setFolders(refetchFolders);
     }
   };
 
@@ -161,13 +183,25 @@ const SearchPage = ({ defaultTab = 'search', user, onRequireLogin }) => {
     if (verifyGuest()) return;
     try {
       const updatedFolders = await folderService.toggleItem(folderId, item);
-      setFolders(updatedFolders || []);
-      
+      setFolders(prev => {
+        if (Array.isArray(updatedFolders) && updatedFolders.length > 0) return updatedFolders;
+        return prev;
+      });
+
       if (selectedFolder && selectedFolder.id === folderId) {
-        setSelectedFolder(updatedFolders.find(f => f.id === folderId));
+        const nextFolder = Array.isArray(updatedFolders)
+          ? updatedFolders.find(f => f.id === folderId)
+          : selectedFolder;
+        setSelectedFolder(nextFolder || selectedFolder);
       }
     } catch (err) {
       console.error("Erro ao alternar item na pasta:", err);
+      const refetchFolders = await folderService.getFolders().catch(() => []);
+      setFolders(refetchFolders);
+      if (selectedFolder) {
+        const nextFolder = refetchFolders.find(f => f.id === selectedFolder.id);
+        setSelectedFolder(nextFolder || selectedFolder);
+      }
     }
   };
 

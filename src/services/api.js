@@ -73,13 +73,18 @@ const normalizeAuthResponse = (data) => {
     return { raw: data, user: null };
   }
 
-  // Captura o usuário independentemente de como o PHP o devolva
   const user = data.user ?? data.data?.user ?? data.data ?? (data.id ? data : null);
-  
+
   return {
     raw: data,
     user: typeof user === 'object' && user !== null ? user : null
   };
+};
+
+const normalizeListResponse = (data) => {
+  if (Array.isArray(data)) return data;
+  if (!data || typeof data !== 'object') return [];
+  return data.folders ?? data.favorites ?? data.data ?? [];
 };
 
 // ==================== SERVIÇOS DE AUTENTICAÇÃO ====================
@@ -116,7 +121,7 @@ export const folderService = {
         ? `${API_URL}?action=get_folders&user_id=${userId}`
         : `${API_URL}?action=get_folders`;
       const data = await safeFetch(url, fetchOptions('GET'));
-      return Array.isArray(data) ? data : [];
+      return normalizeListResponse(data);
     } catch (error) {
       console.error('folderService.getFolders error:', error);
       return [];
@@ -124,38 +129,42 @@ export const folderService = {
   },
 
   createFolder: async (folderData) => {
-    return safeFetch(API_URL, fetchOptions('POST', {
+    const response = await safeFetch(API_URL, fetchOptions('POST', {
       action: 'create_folder',
       name: folderData.name,
       bio: folderData.bio,
       coverUrl: folderData.coverUrl
     }));
+    return normalizeListResponse(response);
   },
 
   updateFolder: async (folderId, folderData) => {
-    return safeFetch(API_URL, fetchOptions('POST', {
+    const response = await safeFetch(API_URL, fetchOptions('POST', {
       action: 'update_folder',
       folder_id: folderId,
       name: folderData.name,
       bio: folderData.bio,
       coverUrl: folderData.coverUrl
     }));
+    return normalizeListResponse(response);
   },
 
   deleteFolder: async (folderId) => {
-    return safeFetch(API_URL, fetchOptions('POST', {
+    const response = await safeFetch(API_URL, fetchOptions('POST', {
       action: 'delete_folder',
       folder_id: folderId
     }));
+    return normalizeListResponse(response);
   },
 
   toggleItem: async (folderId, item) => {
-    return safeFetch(API_URL, fetchOptions('POST', {
+    const response = await safeFetch(API_URL, fetchOptions('POST', {
       action: 'toggle_folder_item',
       folder_id: folderId,
       item_id: item.uId,
       image_url: item.img
     }));
+    return normalizeListResponse(response);
   }
 };
 
@@ -168,7 +177,7 @@ export const favoriteService = {
         ? `${API_URL}?action=get_favorites&user_id=${userId}`
         : `${API_URL}?action=get_favorites`;
       const data = await safeFetch(url, fetchOptions('GET'));
-      return Array.isArray(data) ? data : [];
+      return normalizeListResponse(data);
     } catch (error) {
       console.error('favoriteService.getFavorites error:', error);
       return [];
@@ -176,10 +185,11 @@ export const favoriteService = {
   },
 
   toggleFavorite: async (item) => {
-    return safeFetch(API_URL, fetchOptions('POST', {
+    const response = await safeFetch(API_URL, fetchOptions('POST', {
       action: 'toggle_favorite',
       item_id: item.uId,
       image_url: item.img
     }));
+    return normalizeListResponse(response);
   }
 };
