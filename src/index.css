@@ -8,7 +8,16 @@
 }
 
 @layer base {
-  /* O segredo está aqui: o fundo muda baseado na classe .dark do html */
+  /* Evita scroll horizontal indesejado em celulares */
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* O fundo muda baseado na classe .dark do html */
   body {
     @apply bg-white text-black antialiased transition-colors duration-300;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -17,6 +26,11 @@
   /* Quando o HTML tiver a classe .dark, o body fica preto e o texto branco */
   .dark body {
     @apply bg-black text-white;
+  }
+
+  /* Melhora a acessibilidade do toque em smartphones */
+  button, input, select, textarea {
+    touch-action: manipulation;
   }
 }
 
@@ -51,4 +65,31 @@
 
 .break-inside-avoid {
   break-inside: avoid;
+}
+
+/* ==========================================
+   SUPER MEDIA QUERIES (Complemento para o Tailwind)
+   ========================================== */
+
+/* 1. CELULARES PEQUENOS (< 576px) */
+@media (max-width: 575.98px) {
+  /* Ajusta inputs para terem área de toque confortável */
+  input, button, select {
+    min-height: 44px;
+  }
+  
+  /* Tabelas não estouram a tela */
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+/* 2. REDUÇÃO DE MOVIMENTO (Acessibilidade) */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
