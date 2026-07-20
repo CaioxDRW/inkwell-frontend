@@ -1,6 +1,7 @@
-const API_URL = '/api-proxy/api.php';
-const LOGIN_URL = '/api-proxy/login.php';
-const REGISTER_URL = '/api-proxy/register.php';
+const API_BASE_URL = 'https://inkwell-backend-production-7960.up.railway.app';
+const API_URL = `${API_BASE_URL}/api.php`;
+const LOGIN_URL = `${API_BASE_URL}/login.php`;
+const REGISTER_URL = `${API_BASE_URL}/register.php`;
 
 // Função auxiliar para tentar pegar o ID do usuário localmente
 const getFallbackUserId = () => {
@@ -24,8 +25,7 @@ const fetchOptions = (method, body = null) => {
 
   const options = {
     method,
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include'
+    headers: { 'Content-Type': 'application/json' }
   };
 
   if (body) {
@@ -44,11 +44,11 @@ const safeFetch = async (url, options) => {
     if (text) {
       try {
         data = JSON.parse(text);
-} catch (jsonError) {
-  console.log("CONTEÚDO RECEBIDO DO SERVIDOR:", text); // <-- Adicione este log
-  console.error('Resposta do PHP não é JSON válido:', text);
-  throw new Error('O servidor respondeu em formato inválido. Tente recarregar.');
-}
+      } catch (jsonError) {
+        console.log("CONTEÚDO RECEBIDO DO SERVIDOR:", text);
+        console.error('Resposta do PHP não é JSON válido:', text);
+        throw new Error('O servidor respondeu em formato inválido. Tente recarregar.');
+      }
     }
 
     if (!response.ok) {
